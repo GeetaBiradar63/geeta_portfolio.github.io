@@ -249,6 +249,103 @@
         </section>
 
         <section>
+
+           
+    <h2>C++ Code implimentation</h2>
+    <p>The following C++ code demonstrates how to find the nearest recycling center using Dijkstra's algorithm:</p>
+    <pre>
+<code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;queue&gt;
+#include &lt;unordered_map&gt;
+#include &lt;climits&gt;
+using namespace std;
+
+// Graph representation using an adjacency list
+class Graph {
+public:
+    unordered_map&lt;string, vector&lt;pair&lt;string, int&gt;&gt;&gt; adjList;
+
+    void addEdge(string u, string v, int weight) {
+        adjList[u].push_back({v, weight});
+        adjList[v].push_back({u, weight}); // Assuming an undirected graph
+    }
+
+    // Dijkstra's Algorithm
+    unordered_map&lt;string, int&gt; dijkstra(string start) {
+        unordered_map&lt;string, int&gt; distances;
+        for (auto&amp; node : adjList) {
+            distances[node.first] = INT_MAX; // Initialize distances to infinity
+        }
+        distances[start] = 0;
+
+        priority_queue&lt;pair&lt;int, string&gt;, vector&lt;pair&lt;int, string&gt;&gt;, greater&lt;&gt;&gt; minHeap;
+        minHeap.push({0, start}); // {distance, node}
+
+        while (!minHeap.empty()) {
+            auto [currentDistance, currentNode] = minHeap.top();
+            minHeap.pop();
+
+            if (currentDistance &gt; distances[currentNode]) continue;
+
+            for (auto&amp; [neighbor, weight] : adjList[currentNode]) {
+                int distance = currentDistance + weight;
+                if (distance &lt; distances[neighbor]) {
+                    distances[neighbor] = distance;
+                    minHeap.push({distance, neighbor});
+                }
+            }
+        }
+
+        return distances;
+    }
+
+    // Find the nearest recycling center
+    pair&lt;string, int&gt; findNearestRecyclingCenter(string start, vector&lt;string&gt;&amp; centers) {
+        unordered_map&lt;string, int&gt; distances = dijkstra(start);
+        string nearestCenter;
+        int minDistance = INT_MAX;
+
+        for (auto&amp; center : centers) {
+            if (distances[center] &lt; minDistance) {
+                minDistance = distances[center];
+                nearestCenter = center;
+            }
+        }
+
+        return {nearestCenter, minDistance};
+    }
+};
+
+int main() {
+    Graph g;
+
+    // Adding edges to the graph
+    g.addEdge("A", "B", 5);
+    g.addEdge("A", "C", 2);
+    g.addEdge("B", "D", 4);
+    g.addEdge("B", "E", 2);
+    g.addEdge("C", "F", 3);
+    g.addEdge("D", "E", 1);
+    g.addEdge("E", "F", 6);
+
+    // Define recycling centers
+    vector&lt;string&gt; recyclingCenters = {"D", "F"};
+
+    // Start location
+    string startLocation = "A";
+
+    // Find and print the nearest recycling center
+    auto [nearestCenter, distance] = g.findNearestRecyclingCenter(startLocation, recyclingCenters);
+    cout &lt;&lt; "The nearest recycling center to " &lt;&lt; startLocation &lt;&lt; " is " &lt;&lt; nearestCenter
+         &lt;&lt; " with a distance of " &lt;&lt; distance &lt;&lt; "." &lt;&lt; endl;
+
+    return 0;
+}
+</code>
+    </pre>
+
+            
             <h3>Reflections</h3>
             <h4>1. What are the kinds of problems we see in nature? (Iteration, Recursion, Backtracking)</h4>
             <p><strong>Iteration</strong></p>
